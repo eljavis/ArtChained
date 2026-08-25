@@ -19,13 +19,14 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
     uint256 public listingFee = 0.01 ether;      // Fixed fee for publishing an NFT
     uint256 public ownerPercentage = 5;          // Percentage that goes to the owner (e.g., 5%)
 
-    mapping (address => mapping(uint256 => Listing)) listing;
+    mapping (address => mapping(uint256 => Listing)) public listing;
 
     event NFTListed(address indexed seller, address indexed nftAddress, uint256 indexed tokenId, uint256 price);
     event NFTCancelled(address indexed seller, address indexed nftAddress, uint256 indexed tokenId);
     event NFTSold(address indexed buyer, address indexed seller, address indexed nftAddress, uint256 tokenId, uint256 price);
     
     constructor() Ownable(msg.sender) {
+        
         
     }
 
@@ -91,13 +92,15 @@ contract NFTMarketplace is Ownable, ReentrancyGuard {
     }
 
     //Update Percentage
-    function updateOwnerPercentage(uint256 newPercentage_) external onlyOwner {
+    function updateOwnerPercentage(uint256 newPercentage_) external {
+        require(msg.sender == owner(), "Only the owner of the contract can update his/her own percentage");
         require(newPercentage_ <= 100, "Percentage cannot exceed 100");
         ownerPercentage = newPercentage_;
     }
 
     //Update Fee
-    function updateListingFee(uint256 newFee_) external onlyOwner {
+    function updateListingFee(uint256 newFee_) external {
+        require(msg.sender == owner(), "Only the owner of the contract can update the listing fee");
         listingFee = newFee_;
     }
 }
